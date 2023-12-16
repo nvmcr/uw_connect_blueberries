@@ -4,3 +4,4 @@ bin/
 pyvenv.cfg
 .env
 __pycache__
+uwconnect*
