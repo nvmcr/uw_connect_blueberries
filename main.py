@@ -28,15 +28,15 @@ logging.getLogger("selenium").setLevel(level=levels.get("error"))
 logging.getLogger("root").setLevel(level=levels.get(os.getenv("LOG_LEVEL")))
 
 
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
+username = os.getenv("UW_ID")
+password = os.getenv("UW_PASSWORD")
 
 uwID = "mamishev"
 
 session = requests.Session()
 
 userToken = login(session, username, password)
-information = getInfoFromID()
+information = getInfoFromID(session, uwID, userToken)
 
 #
 #
@@ -48,6 +48,6 @@ submit["se_routing_related_cc"] = information["cost_center"]
 submit["trvln_base_your_email"] = information["email"]
 submit["se_routing_position_str"] = information["position"]
 submit["se_routing_related_bu"] = information["balancing_unit"]
-submit["fin_contact_number"] = information["phoneNumber"]
+submit["fin_contact_number"] = information["phone_number"]
 submit["trvln_confirm_total_hide"] = "100.00"
 submit["trvln_base_exp_total"] = "100.00"
