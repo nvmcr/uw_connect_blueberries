@@ -2,11 +2,10 @@ from time import sleep
 import requests
 import logging
 import os
-from submit import submit
 from dotenv import load_dotenv
 
-from login import login
-from getInformationID import getInfoFromID
+from GoogleSheets import googleSheets
+from UWConnectService import UWConnectService
 
 load_dotenv()  # Load .env file
 
@@ -27,13 +26,30 @@ logging.getLogger("selenium").setLevel(level=levels.get("error"))
 
 logging.getLogger("root").setLevel(level=levels.get(os.getenv("LOG_LEVEL")))
 
-
 username = os.getenv("UW_ID")
 password = os.getenv("UW_PASSWORD")
-
 uwID = "mamishev"
 
-session = requests.Session()
+
+worksheet = googleSheets(
+    "https://docs.google.com/spreadsheets/d/1IVVHmjfvwwHswysMITsFLjgF2K4YYH4FtAmyMdUPB8A/edit", 1038549554, "./credentials.json")
+columns = worksheet.column_count
+
+for column_selector in range(3, columns):  # Skip template
+    status = worksheet.cell(3, column_selector).value
+    if (status is None):
+        break
+    if "Submitted" in status:  # ! Change to "Ready to Submit"
+        print("READY TO SUBMIT!")
+        print(worksheet.getColumn(column_selector))
+
+
+uwConnectService = UWConnectService(username, password)
+
+uwConnectService.getInformationFromID(uwID)
+
+exit()
+
 
 userToken = login(session, username, password)
 information = getInfoFromID(session, uwID, userToken)
@@ -41,13 +57,3 @@ information = getInfoFromID(session, uwID, userToken)
 #
 #
 #
-submit["trvln_base_purpose"] = ""
-submit["se_routing_shared_environment"] = information["shared_environment"]
-submit["fin_uw_netid"] = uwID
-submit["se_routing_related_cc"] = information["cost_center"]
-submit["trvln_base_your_email"] = information["email"]
-submit["se_routing_position_str"] = information["position"]
-submit["se_routing_related_bu"] = information["balancing_unit"]
-submit["fin_contact_number"] = information["phone_number"]
-submit["trvln_confirm_total_hide"] = "100.00"
-submit["trvln_base_exp_total"] = "100.00"
