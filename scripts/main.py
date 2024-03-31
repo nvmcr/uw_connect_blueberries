@@ -1,5 +1,6 @@
+import json
 from time import sleep
-import requests
+import xml.etree.ElementTree as ET
 import logging
 import os
 from dotenv import load_dotenv
@@ -28,32 +29,25 @@ logging.getLogger("root").setLevel(level=levels.get(os.getenv("LOG_LEVEL")))
 
 username = os.getenv("UW_ID")
 password = os.getenv("UW_PASSWORD")
-uwID = "mamishev"
 
 
 worksheet = googleSheets(
-    "https://docs.google.com/spreadsheets/d/1IVVHmjfvwwHswysMITsFLjgF2K4YYH4FtAmyMdUPB8A/edit", 1038549554, "./credentials.json")
+    "https://docs.google.com/spreadshets/d/13FJjhg-Uc_OhIxRebxAGpB-aat5aNiAwP1JWwhgmFQs/edit", 1018754358, "./credentials.json")
 columns = worksheet.column_count
 
-for column_selector in range(3, columns):  # Skip template
+column = []
+for column_selector in range(1, columns):  # Skip template
     status = worksheet.cell(3, column_selector).value
     if (status is None):
+        print("no status found")
         break
-    if "Submitted" in status:  # ! Change to "Ready to Submit"
+    if "Submission Stage" in status:  # ! Change to "Submission Stage"
         print("READY TO SUBMIT!")
-        print(worksheet.getColumn(column_selector))
+        submit_prompts = worksheet.getColumn(1)
+        column = worksheet.getColumn(column_selector)
+        break  # TODO REMOVE
+    else:
+        print("not found")
 
-
-uwConnectService = UWConnectService(username, password)
-
-uwConnectService.getInformationFromID(uwID)
-
-exit()
-
-
-userToken = login(session, username, password)
-information = getInfoFromID(session, uwID, userToken)
-
-#
-#
-#
+uwConnectService = UWConnectService(
+    username, password, "https://uwconnect.uw.edu/finance?id=sc_cat_item&sys_id=9b6422601b6ae9d0cc990dc0604bcbb3", submit_prompts, column)

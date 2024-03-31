@@ -35,6 +35,6 @@ class googleSheets(gspread.Worksheet):
     def getColumn(self, column):
         cells = super().get_all_values()
         columnList = []
-        for i in range(super().column_count):
+        for i in range(3, len(cells)):
             columnList.append(cells[i][column-1])
         return columnList
