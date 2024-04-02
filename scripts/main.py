@@ -1,7 +1,3 @@
-import json
-from time import sleep
-import xml.etree.ElementTree as ET
-import logging
 import os
 from dotenv import load_dotenv
 
@@ -10,31 +6,15 @@ from UWConnectService import UWConnectService
 
 load_dotenv()  # Load .env file
 
-levels = {
-    'critical': logging.CRITICAL,
-    'error': logging.ERROR,
-    'warn': logging.WARNING,
-    'warning': logging.WARNING,
-    'info': logging.INFO,
-    'debug': logging.DEBUG
-
-}
-
-
-# # Set logging severity
-logging.getLogger("seleniumwire.server").setLevel(level=levels.get("error"))
-logging.getLogger("selenium").setLevel(level=levels.get("error"))
-
-logging.getLogger("root").setLevel(level=levels.get(os.getenv("LOG_LEVEL")))
-
 username = os.getenv("UW_ID")
 password = os.getenv("UW_PASSWORD")
 
 
 worksheet = googleSheets(
-    "https://docs.google.com/spreadshets/d/13FJjhg-Uc_OhIxRebxAGpB-aat5aNiAwP1JWwhgmFQs/edit", 1018754358, "./credentials.json")
+    "https://docs.google.com/spreadsheets/d/13FJjhg-Uc_OhIxRebxAGpB-aat5aNiAwP1JWwhgmFQs/edit", 1018754358, "../credentials.json")
 columns = worksheet.column_count
-
+print(worksheet.cell(1, 1).value)
+print(columns)
 column = []
 for column_selector in range(1, columns):  # Skip template
     status = worksheet.cell(3, column_selector).value

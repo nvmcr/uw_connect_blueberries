@@ -1,40 +1,22 @@
 import gspread
-from gspread.utils import finditem
-from google.auth import exceptions
-from google.oauth2.service_account import Credentials
 
-
-class googleSheets(gspread.Worksheet):
+class googleSheets():
     def __init__(self, url, spreadsheet_id, credentials_path) -> None:
-        # Set the path to your credentials JSON file
-        credentials_path = '../credentials.json'
-        try:
-            # Try to get credentials from the file
-            credentials = Credentials.from_service_account_file(credentials_path, scopes=[
-                                                                'https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive'])
-        except exceptions.DefaultCredentialsError:
-            print("Credentials not found or invalid. Make sure to provide a valid path to your credentials JSON file.")
-            exit()
-
-        # Authorize the client
-        gc = gspread.authorize(credentials)
-
-        # Open the Google Sheet by title
+        gc = gspread.service_account(credentials_path)
         spreadsheet = gc.open_by_url(url)
-        # Select a specific worksheet
-        worksheet_id_int = int(spreadsheet_id)
 
-        item = finditem(
-            lambda x: x["properties"]["sheetId"] == worksheet_id_int,
-            spreadsheet.fetch_sheet_metadata()["sheets"],
-        )
+        self.ws = spreadsheet.get_worksheet_by_id(spreadsheet_id)
 
-        super().__init__(spreadsheet, item["properties"])
+        self.column_count = self.ws.column_count
         pass
-
+    def get_all_values(self):
+        return self.ws.get_all_values()
     def getColumn(self, column):
-        cells = super().get_all_values()
+        cells = self.get_all_values()
         columnList = []
         for i in range(3, len(cells)):
             columnList.append(cells[i][column-1])
         return columnList
+    
+    def cell(self, row, col):
+        return self.ws.cell(row, col)

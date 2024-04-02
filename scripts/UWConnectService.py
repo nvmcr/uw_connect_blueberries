@@ -1,8 +1,5 @@
-import json
-import os
 from time import sleep
 import random
-import gzip
 import requests
 import xml.etree.ElementTree as ET
 
