@@ -13,11 +13,10 @@ from seleniumwire import webdriver
 
 
 class UWConnectService:
-    def __init__(self, username, password, webpage_url, data_type, data_given) -> None:
+    def __init__(self, username, password, webpage_url) -> None:
         self.session = requests.Session()
         options = Options()
         options.add_experimental_option("detach", True)
-        # options.add_argument("--headless")
 
         self.driver = webdriver.Chrome(options=options)
 
@@ -39,6 +38,7 @@ class UWConnectService:
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, 'sp_formfield_fin_contact_number')))
 
+    def nonTravel(self, data_type, data_given):
         creator = ""
         uwID = ""
         phone_number = ""
@@ -168,7 +168,8 @@ class UWConnectService:
             '//*[@id="sp_formfield_additional_comments"]', additional_info)
         self.click_element('//*[@id="attachment_add"]')
         sleep(10)
-
+    
+    
     def click_element(self, XPATH_statement):
         self.driver.find_element(By.XPATH, XPATH_statement).click()
 
